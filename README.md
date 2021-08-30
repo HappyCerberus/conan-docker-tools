@@ -1,3 +1,8 @@
+# Forked version
+
+This adds build from GIT head for GCC and Clang modern images.
+
+
 | Service | OS |  Status  |
 |---------|----|----------|
 | Azure | Windows | [![Azure Status](https://dev.azure.com/conanio/conan-docker-tools/_apis/build/status/conan-io.conan-docker-tools?branchName=master)](https://dev.azure.com/conanio/conan-docker-tools/_build/latest?definitionId=1&branchName=master) |
