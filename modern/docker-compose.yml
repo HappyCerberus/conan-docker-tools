@@ -35,6 +35,10 @@ x-gcc10: &gcc10
 x-gcc11: &gcc11
     GCC_VERSION: ${GCC11_VERSION}
 
+# Git head version
+x-gcc12: &gcc12
+    GCC_VERSION: ${GCC12_VERSION}
+
 x-llvm10: &llvm10
     CLANG_VERSION: ${CLANG10_VERSION}
 
@@ -46,6 +50,10 @@ x-llvm12: &llvm12
 
 x-llvm13: &llvm13
     CLANG_VERSION: ${CLANG13_VERSION}
+    
+# Git head version
+x-llvm14: &llvm14
+    CLANG_VERSION: ${CLANG14_VERSION}
 
 
 services:
@@ -138,6 +146,17 @@ services:
         image: ${DOCKER_USERNAME}/gcc11-builder-${DISTRO}:${DOCKER_TAG}
         container_name: gcc11-builder
         tty: true
+    gcc12-builder:
+        build:
+          context: gcc
+          dockerfile: Dockerfile.githead
+          target: gcc-builder
+          args:
+              <<: *common-args
+              <<: *gcc12
+        image: ${DOCKER_USERNAME}/gcc12-builder-${DISTRO}:${DOCKER_TAG}
+        container_name: gcc12-builder
+        tty: true
     clang10-builder:
         build:
             context: clang
@@ -171,7 +190,6 @@ services:
         image: ${DOCKER_USERNAME}/clang12-builder-${DISTRO}:${DOCKER_TAG}
         container_name: clang12-builder
         tty: true
-
     clang13-builder:
         build:
             context: clang
@@ -183,6 +201,18 @@ services:
         image: ${DOCKER_USERNAME}/clang13-builder-${DISTRO}:${DOCKER_TAG}
         container_name: clang13-builder
         tty: true
+    clang14-builder:
+        build:
+            context: clang
+            dockerfile: Dockerfile.githead
+            target: clang-builder
+            args:
+                <<: *common-args
+                <<: *llvm14
+        image: ${DOCKER_USERNAME}/clang14-builder-${DISTRO}:${DOCKER_TAG}
+        tty: true
+
+
 
     # Deploy images
     gcc5-deploy:
@@ -269,6 +299,18 @@ services:
         image: ${DOCKER_USERNAME}/gcc11-deploy-${DISTRO}:${DOCKER_TAG}
         container_name: gcc11-deploy
         tty: true
+    gcc12-deploy:
+        build:
+            context: gcc
+            dockerfile: Dockerfile.githead
+            target: deploy
+            cache_from:
+              - ${DOCKER_USERNAME}/gcc12-builder-${DISTRO}:${DOCKER_TAG}
+            args:
+                <<: *common-args
+        image: ${DOCKER_USERNAME}/gcc12-deploy-${DISTRO}:${DOCKER_TAG}
+        container_name: gcc12-deploy
+        tty: true
     clang10-deploy:
         build:
             context: clang
@@ -305,7 +347,6 @@ services:
         image: ${DOCKER_USERNAME}/clang12-deploy-${DISTRO}:${DOCKER_TAG}
         container_name: clang12-deploy
         tty: true
-
     clang13-deploy:
         build:
             context: clang
@@ -317,6 +358,17 @@ services:
                 <<: *common-args
         image: ${DOCKER_USERNAME}/clang13-deploy-${DISTRO}:${DOCKER_TAG}
         container_name: clang13-deploy
+        tty: true
+    clang14-deploy:
+        build:
+            context: clang
+            dockerfile: Dockerfile.githead
+            target: deploy
+            cache_from:
+              - ${DOCKER_USERNAME}/clang14-builder-${DISTRO}:${DOCKER_TAG}
+            args:
+                <<: *common-args
+        image: ${DOCKER_USERNAME}/clang14-deploy-${DISTRO}:${DOCKER_TAG}
         tty: true
 
     # Images
@@ -390,6 +442,14 @@ services:
         image: ${DOCKER_USERNAME}/gcc11-${DISTRO}:${DOCKER_TAG}
         container_name: gcc11
         tty: true
+    gcc12:
+        build:
+            context: gcc
+            dockerfile: Dockerfile.githead
+            args:
+                <<: *common-args
+                <<: *gcc12
+        image: ${DOCKER_USERNAME}/gcc12-${DISTRO}:${DOCKER_TAG}
     clang10:
         build:
             context: clang
@@ -420,7 +480,6 @@ services:
         image: ${DOCKER_USERNAME}/clang12-${DISTRO}:${DOCKER_TAG}
         container_name: clang12
         tty: true
-
     clang13:
         build:
             context: clang
@@ -430,7 +489,16 @@ services:
                 <<: *llvm13
         image: ${DOCKER_USERNAME}/clang13-${DISTRO}:${DOCKER_TAG}
         container_name: clang13
-        tty: true
+        tty: true        
+    clang14:
+        build:
+            context: clang
+            dockerfile: Dockerfile.githead
+            args:
+                <<: *common-args
+                <<: *llvm14
+        image: ${DOCKER_USERNAME}/clang14-${DISTRO}:${DOCKER_TAG}
+        container_name: clang14
 
     # Jenkins images
     gcc5-jenkins:
