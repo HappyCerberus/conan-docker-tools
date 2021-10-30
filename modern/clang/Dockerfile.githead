@@ -60,7 +60,7 @@ RUN apt-get -qq update \
        -DLLVM_ENABLE_WARNINGS=OFF \
        -DLLVM_ENABLE_PEDANTIC=OFF \
        -DLLVM_ENABLE_ASSERTIONS=OFF \
-       -DLLVM_ENABLE_PROJECTS="libunwind;clang;libcxx;libcxxabi;lld;compiler-rt" \
+       -DLLVM_ENABLE_PROJECTS="libunwind;clang;libcxx;libcxxabi;lld;compiler-rt;clang-tools-extra" \
        -DLLVM_BUILD_DOCS=OFF \
        -DLLVM_BUILD_TESTS=OFF \
        -DLLVM_BUILD_32_BITS=OFF \
@@ -82,6 +82,7 @@ RUN apt-get -qq update \
        -DCLANG_ENABLE_STATIC_ANALYZER=OFF \
        -DCLANG_INCLUDE_DOCS=OFF \
        -DCLANG_BUILD_EXAMPLES=OFF \
+	   -DCLANG_BUILD_TOOLS=ON \
        -DCLANG_ENABLE_BOOTSTRAP=OFF \
        -DCLANG_DEFAULT_RTLIB=compiler-rt \
        -DCLANG_DEFAULT_UNWINDLIB=libunwind \
@@ -118,7 +119,9 @@ RUN apt-get -qq update \
     && ninja clang \
     && ninja lld \
     && ninja compiler-rt \
-    && ninja install-unwind install-cxxabi install-cxx install-clang install-lld install-compiler-rt \
+	&& ninja clang-format \
+	&& ninja clang-tidy \
+	&& ninja install-unwind install-cxxabi install-cxx install-clang install-lld install-compiler-rt install-clang-tidy install-clang-format install-clang-tidy install-clang-format \
     && cp -a lib/clang/${CLANG_VERSION}/include /tmp/install/lib/clang/${CLANG_VERSION}/include \
     && cp $(find lib -name "*.so*") /tmp/install/lib
 
